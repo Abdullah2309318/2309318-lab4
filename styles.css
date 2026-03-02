@@ -1,9 +1,12 @@
 .spinner {
     /* Your styling */
     animation: spin 1s linear infinite; /* Required */
-    width: 25px;
-    height: 25px;
-    background-color: red;
+    width: 40px;
+    height: 40px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    margin: 20px auto;
 }
 
 @keyframes spin {
@@ -12,25 +15,39 @@
 }
 
 .country-card {
-    background-color: pink;
-    padding: 10px;
-    margin: 10px;
-    max-width: 100vw;
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .border-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
 }
 
 .country-flag {
     width: 300px;
+    display: block;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+}
+.border-country-flag {
+    width: 100px;
+    display: block;
+    border: 1px solid #eee;
 }
 
 .error {
-    color: red;
+    color: #d9534f;
     font-weight: 700;
-    /* Additional styling */
+    padding: 10px;
+    background-color: #f2dede;
+    border-radius: 4px;
+    margin-top: 10px;
 }
 
 .hidden {

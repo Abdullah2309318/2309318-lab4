@@ -8,16 +8,10 @@ async function searchCountry(countryName) {
         spinner.classList.remove('hidden');
 
         // Fetch country data
-        const countryInfoURL = `https://restcountries.com/v3.1/name/${countryName}`;
+        const countryInfoURL = `https://restcountries.com/v3.1/name/${countryName}?fullText=True`;
         const countryInfoResponse = await fetch(countryInfoURL);
         const countryData = await countryInfoResponse.json();
         const country = countryData[0]; 
-        // console.log(countryName);
-        // console.log(country.capital);
-        // console.log(country.population);
-        // console.log(country.region);
-        // console.log(country.flags.png);
-        // console.log(country.cca2);
 
         // Update DOM
         document.getElementById('country-info').innerHTML = `
@@ -33,25 +27,33 @@ async function searchCountry(countryName) {
         const borders = country.borders;
 
         let bordersArr = [];
-        if(country.borders) {
-            for (let i = 0; i < borders.length; i++) {
-                let borderArr = [];
-                const url = `https://restcountries.com/v3.1/alpha/${borders[i]}`;
-                const response = await fetch(url);
-                const data = await response.json();
 
-                borderArr.push(data[0].name.common);
-                borderArr.push(data[0].flag);
-                bordersArr.push(borderArr);
-            }
+        if (country.borders) {
+            let bordersHTML = `<h3>Bordering Countries:</h3>`;
             
-            // Update bordering countries section
-            document.getElementById('bordering-countries').innerHTML = `
-            <p><strong>Bordering Countries:</strong> ${bordersArr}</p>`   
+            for (const code of country.borders) {
+                const response = await fetch(`https://restcountries.com/v3.1/alpha/${code}`);
+                const data = await response.json();
+                const neighbor = data[0];
+
+                bordersHTML += `
+                    <section class="border-item">
+                        <p>${neighbor.name.common}</p>
+                        <p><img class="border-country-flag" src="${neighbor.flags.svg}"></p>
+                    </section>
+                `;
+            }
+            document.getElementById('bordering-countries').innerHTML = bordersHTML;
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = "";
+            errorElement.classList.remove('hidden'); 
         }
         else {
             document.getElementById('bordering-countries').innerHTML = `
-            <p><strong>Bordering Countries:</strong> ${countryName} does not have any borders.</p>`   
+            <p><strong>Bordering Countries:</strong> ${countryName} does not have any bordering countries.</p>`;
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = "";
+            errorElement.classList.remove('hidden');   
         }
 
         console.log(bordersArr);
@@ -62,6 +64,14 @@ async function searchCountry(countryName) {
     
     catch (error) {
         // Show error message
+        document.getElementById('country-info').innerHTML = "";
+        document.getElementById('bordering-countries').innerHTML = "";
+        
+        // Display the error message
+        const errorElement = document.getElementById('error-message');
+        errorElement.textContent = "Error: Could not find that country. Please try another name.";
+        errorElement.classList.remove('hidden');
+        
         console.error('Error fetching data:', error);
     } 
     
@@ -75,4 +85,11 @@ async function searchCountry(countryName) {
 document.getElementById('search-btn').addEventListener('click', () => {
     const country = document.getElementById('country-input').value;
     searchCountry(country);
+});
+
+document.getElementById('country-input').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        const country = document.getElementById('country-input').value;
+        searchCountry(country);
+    }
 });
